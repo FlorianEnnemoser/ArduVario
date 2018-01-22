@@ -245,7 +245,7 @@ void loop()
     // DG500 = 1/40
     
       //calc Range KA13 (bei geringstem Sinken)
-      range = ((a_vario + SINK_ASK13 + vario - ALTITUDE)*27)/1000;
+      range = ((a_vario /*+ SINK_ASK13*/ - ALTITUDE)*27)/1000;
 
       
       //print Range
@@ -270,9 +270,5 @@ void loop()
     }
 
  }
-
-////////BEEP BEEP IM A SHEEP////////////
-//tone(BUZZERPIN,1000,500);
-
   delay(PAUSE);
 }

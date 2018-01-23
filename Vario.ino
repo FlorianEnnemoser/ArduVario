@@ -9,6 +9,7 @@ SFE_BMP180 pressure;
 #define PAUSE 250
 #define ALTITUDE 337.0
 #define SINK_ASK13 -1.0
+#define GLIDERATIO_ASK13 27
 
 int VARIO_STATE = 0;
 boolean VARIO_ON=false;
@@ -19,10 +20,13 @@ boolean ALT_ON=false;
 int RANGE_STATE =0;
 boolean RANGE_ON=false;
 
+int SOUND_STATE =0;
+boolean SOUND_ON=false;
 
 int btnVario = 8;
 int btnAlt = 9;
 int btnRange = 10;
+int btnSound =7; 
 
 
 int lastButtonState = 0; 
@@ -32,8 +36,6 @@ float a_vario1 = 0;
 float vario = 0;
 
 float range;
-
-
 
 void setup()
 {
@@ -60,6 +62,8 @@ void setup()
   pinMode(btnVario, INPUT);
   pinMode(btnAlt, INPUT);
   pinMode(btnRange, INPUT);
+  pinMode(btnSound, INPUT);
+
   
   lcd.home();
   lcd.print("Buttons init ");
@@ -96,15 +100,15 @@ void loop()
         
         if (status != 0)
         {
-          // print relative / sea level pressure
+          // relative / sea level pressure
           p0 = pressure.sealevel(P,ALTITUDE); 
           
-          // print altitude m/ft
+          // altitude m/ft
           a = pressure.altitude(P,p0);   
         }
         else lcd.print("error pressure");
       }
-      else lcd.println("error pressure");
+      else lcd.print("error pressure");
     }
     else lcd.print("error temperature ");
   }
@@ -134,7 +138,7 @@ void loop()
     if((vario /*+ SINK_ASK13*/) >= 0)
     {
       tone(BUZZERPIN,(2000+(250*vario)),300-(vario*80));
-      delay(PAUSE-vario*10);
+      delay(PAUSE/(vario+1));
     }
 // go down, stay down
     if((vario /*+ SINK_ASK13*/) < 0)
@@ -245,8 +249,14 @@ void loop()
     // DG500 = 1/40
     
       //calc Range KA13 (bei geringstem Sinken)
-      range = ((a_vario /*+ SINK_ASK13*/ - ALTITUDE)*27)/1000;
-
+      if(a_vario <= ALTITUDE)
+      {
+        range = 0;
+      }
+      else
+      {
+      range = ((a_vario /*+ SINK_ASK13*/ - ALTITUDE)*GLIDERATIO_ASK13)/1000;
+      }
       
       //print Range
           lcd.clear();
@@ -270,5 +280,9 @@ void loop()
     }
 
  }
+
+////////BEEP BEEP IM A SHEEP////////////
+//tone(BUZZERPIN,1000,500);
+
   delay(PAUSE);
 }

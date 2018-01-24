@@ -5,7 +5,7 @@
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 SFE_BMP180 pressure;
 
-#define BUZZERPIN 6
+#define BUZZERPIN 7
 #define PAUSE 250
 #define ALTITUDE 337.0
 #define SINK_ASK13 -1.0
@@ -37,11 +37,13 @@ float vario = 0;
 
 float range;
 
+
+
 void setup()
 {
   Serial.begin(9600);
   Serial.println("BOOT");
-
+  
   //init LCD
   lcd.begin(16,2);
   
@@ -76,11 +78,11 @@ void setup()
 
 void loop()
 {
-  char status,statusvario;
-  double T,P,p0,a,a_vario,vario,p0_vario,P_vario;
+ lcd.home();
 
-  lcd.home();
-
+char status,statusvario;
+double T,P,p0,a,a_vario,vario,p0_vario,P_vario;
+  
 /////CALC///////////
   status = pressure.startTemperature();
   if (status != 0)
@@ -113,7 +115,6 @@ void loop()
     else lcd.print("error temperature ");
   }
   else lcd.print("error temperature");
-
 
 ////////VARIO////////
   statusvario = pressure.startPressure(3);
@@ -286,3 +287,4 @@ void loop()
 
   delay(PAUSE);
 }
+
